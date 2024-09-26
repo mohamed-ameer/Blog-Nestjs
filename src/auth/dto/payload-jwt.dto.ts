@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, IsString, IsEnum } from "class-validator";
+import { Role } from "../../roles/role.enum";
 export class PayloadJwtDto {
     @IsNumber()
     @IsNotEmpty()
@@ -12,4 +13,8 @@ export class PayloadJwtDto {
     @IsString()
     @IsNotEmpty()
     email: string;
+
+    @IsEnum(Role)
+    @IsNotEmpty()
+    role: Role;
 }

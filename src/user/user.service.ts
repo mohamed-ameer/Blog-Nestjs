@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { PayloadJwtDto } from '../auth/dto/payload-jwt.dto';
+import { Role } from '../roles/role.enum';
 @Injectable()
 export class UserService {
   constructor(
@@ -26,13 +27,15 @@ export class UserService {
       throw new ConflictException('email already exists');
     }
     const user = this.userRepository.create(createUserDto);
+    user.role = Role.USER;
     user.password = this.authService.hashPassword(user.password);
     await this.userRepository.save(user);
     const { password, ...userWithoutPassword } = user;
     const payload: PayloadJwtDto = {
       id: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role
     };
     const token = this.authService.generateToken(payload);
     return { message: 'User created successfully', token };
@@ -105,7 +108,8 @@ export class UserService {
     const payload: PayloadJwtDto = {
       id: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role
     };
     const token = this.authService.generateToken(payload);
     return { message: 'User logged in successfully', token };
